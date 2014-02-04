@@ -1,0 +1,13 @@
+#!~ath.rb
+// test program
+import universe U;
+import author Karkat;
+
+~ATH(U) {
+  ~ATH(Karkat) {
+    Karkat.DIE();
+  } EXECUTE(NULL);
+  U.DIE();
+} EXECUTE(NULL);
+
+THIS.DIE();
