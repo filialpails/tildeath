@@ -1,4 +1,4 @@
-#!~ath.rb
+#!../bin/tildeath
 // test program
 import universe U;
 import author Karkat;

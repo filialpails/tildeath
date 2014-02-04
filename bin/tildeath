@@ -1,0 +1,28 @@
+#!/usr/bin/env ruby
+require 'tildeath'
+require 'optparse'
+
+options = {}
+OptionParser.new do |opts|
+  opts.banner = "Usage: #{__FILE__} [options] [file]"
+  opts.on('-v', '--[no-]verbose', 'Verbose mode') do |v|
+    options[:verbose] = v
+  end
+  opts.on_tail('--version', 'Show version') do
+    puts Tildeath::VERSION
+    exit
+  end
+end.parse!
+
+input = nil
+filename = nil
+if ARGV.length == 0
+  puts "No file given on command line, reading from stdin... (EOF to finish)"
+  input = STDIN.read
+  filename = '-'
+else
+  filename = ARGV.first
+  input = File.open(filename, 'r').read
+end
+
+Tildeath::Interpreter.interpret(input, filename: filename, verbose: options[:verbose])
