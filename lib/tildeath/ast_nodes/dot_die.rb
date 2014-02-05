@@ -1,6 +1,8 @@
 module Tildeath
   module ASTNodes
     class DotDie
+      attr_reader :victim
+
       def initialize(victim)
         @victim = victim
       end

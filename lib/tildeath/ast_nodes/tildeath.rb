@@ -1,6 +1,8 @@
 module Tildeath
   module ASTNodes
     class Tildeath
+      attr_reader :victim, :tildeath_body, :execute_body
+
       def initialize(victim, tildeath_body, execute_body)
         @victim = victim
         @tildeath_body = tildeath_body

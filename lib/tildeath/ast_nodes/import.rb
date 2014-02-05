@@ -3,6 +3,8 @@ require_relative '../imminently_deceased_object'
 module Tildeath
   module ASTNodes
     class Import
+      attr_reader :type, :name
+
       def initialize(type, name)
         @type = type
         @name = name
