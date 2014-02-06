@@ -1,5 +1,6 @@
 require_relative 'tildeath_error'
 require_relative 'token'
+require 'strscan'
 
 module Tildeath
   module Lexer
@@ -31,16 +32,16 @@ module Tildeath
     }
 
     def self.lex(input)
+      ss = StringScanner.new(input)
       # tokens found so far
       tokens = []
       # current position in script
-      pos = 0
       line_number = 0
       column = 0
-      match = nil
-      # while pos isn't outside the script...
-      while pos < input.length
-        if input[pos] != "\n"
+      # while there are chars left...
+      while !ss.eos?
+        # update position info
+        if input[ss.charpos] != "\n"
           column += 1
         else
           line_number += 1
@@ -48,21 +49,24 @@ module Tildeath
         end
         # for each token type...
         good = TOKENS.any? do |sym, regex|
-          # try to match it at the current position in the script
-          match = input.match(regex, pos)
-          # skip to next token type unless it matched at the current position
-          next unless match && match.begin(0) == pos
+          # scan for token type
+          str = ss.scan(regex)
+          # try next token type unless it matched
+          next unless str
           # ignore whitespace and comments
           unless [:WS, :COMMENT].include?(sym)
             # add new token to list of found tokens
             # if it's an identifier, save the actual text found as well
-            tokens << Token.new(sym, line_number, column, sym == :IDENT ? match[0] : nil)
+            tokens << Token.new(sym,
+                                line_number,
+                                column,
+                                sym == :IDENT ? str : nil)
           end
-          # move current position to just after the end of the found token
-          pos += match[0].length
           true
         end
-        fail TildeathError.new(line_number, column), "error: unrecognized token #{input[pos]}" unless good
+        unless good
+          fail TildeathError.new(line_number, column), "error: unrecognized token #{input[pos]}"
+        end
       end
       return tokens
     end
